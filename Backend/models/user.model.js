@@ -1,7 +1,7 @@
 import {Schema, model} from "mongoose";
 
 const userschema= new Schema({
-    username:{
+    fullname:{
         type:String,
         required:true
     },
@@ -13,7 +13,8 @@ const userschema= new Schema({
     password:{
         type:String,
         required:true,
-        select:false
+        select:false,
+        minlength:6
     },
     socketId: {
         type: String,

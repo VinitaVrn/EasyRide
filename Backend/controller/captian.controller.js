@@ -1,4 +1,8 @@
-import { captian } from "../models/captian.model.js";
+import { configDotenv } from "dotenv";
+configDotenv();
+import { captain } from "../models/captian.model.js";
+import argon2 from "argon2";
+import jwt from "jsonwebtoken";
 
 export const registerCaptain = async (req, res, next) => {
 
@@ -7,71 +11,83 @@ export const registerCaptain = async (req, res, next) => {
     //     return res.status(400).json({ errors: errors.array() });
     // }
     
-    const { fullname, email, password, vehicle } = req.body;
-
-    const isCaptainAlreadyExist = await captainModel.findOne({ email });
+    const { name, email, password, vehicle } = req.body;
+    if(!name||!email||!password||!vehicle){
+        throw new Error("all feilds required");
+    }
+    try{
+    const isCaptainAlreadyExist = await captain.findOne({ email });
 
     if (isCaptainAlreadyExist) {
         return res.status(400).json({ message: 'Captain already exist' });
     }
 
 
-    const hashedPassword = await captainModel.hashPassword(password);
+    const hashedPassword = await argon2.hash(password)
 
-    const captain = await captainService.createCaptain({
-        firstname: fullname.firstname,
-        lastname: fullname.lastname,
+    const newcaptain = {
+        name:name,
         email,
         password: hashedPassword,
+        vehicle:{
         color: vehicle.color,
         plate: vehicle.plate,
         capacity: vehicle.capacity,
         vehicleType: vehicle.vehicleType
-    });
+        }
+    };
+    await captain.create(newcaptain)
 
-    const token = captain.generateAuthToken();
-
-    res.status(201).json({ token, captain });
+    res.status(201).json({msg:"captian Registered",newcaptain});
+    } catch(e){
+        res.status(500).json({msg:"Internal server error",error:e.message})
+    }
 
 }
 
 export const loginCaptain = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //     return res.status(400).json({ errors: errors.array() });
+    // }
 
     const { email, password } = req.body;
+    try{
+    const Captain = await captain.findOne({ email }).select('+password');
 
-    const captain = await captainModel.findOne({ email }).select('+password');
-
-    if (!captain) {
+    if (!Captain) {
         return res.status(401).json({ message: 'Invalid email or password' });
     }
-
-    const isMatch = await captain.comparePassword(password);
-
+    const isMatch = await argon2.verify(Captain.password,password)
     if (!isMatch) {
         return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const token = captain.generateAuthToken();
+    const token = jwt.sign({id:Captain._id,name:Captain.name},process.env.JWT_KEY,{expiresIn:"24h"})
 
-    res.cookie('token', token);
+    // res.cookie('token', token);
 
-    res.status(200).json({ token, captain });
+    res.status(200).json({msg:"login success", token, Captain });
+    }catch(e){
+        res.status(500).json({msg:"Internal server error",error:e.message})
+    }
 }
 
-export const getCaptainProfile = async (req, res, next) => {
-    res.status(200).json({ captain: req.captain });
+export const getCaptainProfile = async (req, res) => {
+    try{
+    const Captain=req.captian;
+        res.status(200).json(req.captain);
+    }catch(err){
+        res.status(500).json({msg:"Internal server error"})
+    }
 }
 
-module.exports.logoutCaptain = async (req, res, next) => {
-    const token = req.cookies.token || req.headers.authorization?.split(' ')[ 1 ];
+// export const logoutCaptain = async (req, res, next) => {
+//     // const token = req.cookies.token || req.headers.authorization?.split(' ')[ 1 ];
 
-    await blackListTokenModel.create({ token });
+//     await blackListTokenModel.create({ token });
 
-    res.clearCookie('token');
+//     res.clearCookie('token');
 
-    res.status(200).json({ message: 'Logout successfully' });
-}
+//     res.status(200).json({ message: 'Logout successfully' });
+// }

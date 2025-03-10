@@ -1,6 +1,6 @@
 import {Schema,model} from "mongoose";
 
-const captianSchema=new Schema({
+const captainSchema=new Schema({
     name:{
         type:String,
         required:true,
@@ -57,6 +57,6 @@ const captianSchema=new Schema({
     }
 })
 
-const captian=model("captian",captianSchema);
+const captain=model("captain",captainSchema);
 
-export {captian}
+export {captain}
