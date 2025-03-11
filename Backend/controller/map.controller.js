@@ -3,12 +3,10 @@ import axios from "axios";
 import { getAddressCoordinate,getDistanceTime,getAutoCompleteSuggestions,getCaptainsInTheRadius } from "../services/map.service.js";
 
 export const getCoordinates = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
-
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //     return res.status(400).json({ errors: errors.array() });
+    // }
     const { address } = req.query;
 
     try {
@@ -23,11 +21,10 @@ export const getDistanceTime = async (req, res, next) => {
 
     try {
 
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-
+        // const errors = validationResult(req);
+        // if (!errors.isEmpty()) {
+        //     return res.status(400).json({ errors: errors.array() });
+        // }
         const { origin, destination } = req.query;
 
         const distanceTime = await getDistanceTime(origin, destination);
@@ -44,10 +41,10 @@ export const getAutoCompleteSuggestions = async (req, res, next) => {
 
     try {
 
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        // const errors = validationResult(req);
+        // if (!errors.isEmpty()) {
+        //     return res.status(400).json({ errors: errors.array() });
+        // }
 
         const { input } = req.query;
 

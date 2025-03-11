@@ -23,6 +23,7 @@ export const registerCaptain = async (req, res, next) => {
     }
 
 
+    
     const hashedPassword = await argon2.hash(password)
 
     const newcaptain = {
@@ -75,19 +76,18 @@ export const loginCaptain = async (req, res, next) => {
 
 export const getCaptainProfile = async (req, res) => {
     try{
-    const Captain=req.captian;
         res.status(200).json(req.captain);
     }catch(err){
         res.status(500).json({msg:"Internal server error"})
     }
 }
 
-// export const logoutCaptain = async (req, res, next) => {
-//     // const token = req.cookies.token || req.headers.authorization?.split(' ')[ 1 ];
+export const logoutCaptain = async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[ 1 ];
 
-//     await blackListTokenModel.create({ token });
+    await blackListTokenModel.create({ token });
 
-//     res.clearCookie('token');
+    res.clearCookie('token');
 
-//     res.status(200).json({ message: 'Logout successfully' });
-// }
+    res.status(200).json({ message: 'Logout successfully' });
+}

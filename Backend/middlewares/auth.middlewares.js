@@ -4,13 +4,18 @@ import argon2 from "argon2"
 import jwt from "jsonwebtoken"
 import { users } from "../models/user.model.js";
 import { captain } from "../models/captian.model.js";
+import { blacklist } from "../models/blacklist.model.js";
 
 export const authenticate_user=async (req,res,next)=>{
-    const token=req.headers.authorization;
+    const token=req.headers.authorization.split(" ")[1];
     if(!token){
         return res.status(401).json({msg:"Unauthorized"})
     }
     try {
+            const isblacklisted=await blacklist.findOne({token:token})
+            if(isblacklisted){
+                return res.status(401)
+            }
             const decoded = jwt.verify(token,process.env.secretkey);
             if(req.originalUrl.startsWith("/captain")){
                 console.log("hi")

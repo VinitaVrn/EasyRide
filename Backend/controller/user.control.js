@@ -3,6 +3,7 @@ import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { configDotenv } from "dotenv";
 configDotenv()
+import { blacklist } from "../models/blacklist.model.js";
 
 export const registerUser = async (req, res, next) => {
 
@@ -68,6 +69,18 @@ export const loginUser = async (req, res, next) => {
 }catch(e){
     res.status(500).json({msg:"Internal server error",error:e.message})
 }
+}
+
+export const getprofile =async(req,res)=>{
+    res.status(200).json(req.user);
+}
+
+export const deleteuser=async(req,res)=>{
+    const token = req.headers.authorization.split(' ')[ 1 ];
+
+    await blacklist.create({ token });
+
+    res.status(200).json({ message: 'Logged out' });
 }
 
 

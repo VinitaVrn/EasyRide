@@ -6,6 +6,7 @@ import cors from "cors";
 import {connect} from "mongoose";
 import { userRouter } from "./routers/users.routes.js";
 import { captianRouter } from "./routers/captian.route.js";
+import { mapRoute } from "./routers/map.route.js";
 
 const app=express();
 app.use(cors());
@@ -13,6 +14,7 @@ app.use(express.json());
 
 app.use("/user",userRouter);
 app.use("/captain",captianRouter);
+app.use("/map",mapRoute);
 
 const server=http.createServer(app);
 
