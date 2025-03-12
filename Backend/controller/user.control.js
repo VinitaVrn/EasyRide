@@ -28,9 +28,12 @@ export const registerUser = async (req, res, next) => {
             fullname,
             email,
             password:hashedPassword
-        };   
+        }; 
+          
     await users.create(user);
-    res.status(201).json({msg:"Signup success"})
+    const userdetail = await users.findOne({ email })
+    const token = jwt.sign({id:userdetail._id},process.env.JWT_KEY,{expiresIn:"24h"})
+    res.status(201).json({msg:"Signup success",token})
 
 }catch(e){
     res.status(500).json({msg:"Internal server error", error:e.message})

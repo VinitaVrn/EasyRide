@@ -55,3 +55,4 @@ const rideSchema= new Schema({
 })
 
 const rides=model("ride",rideSchema)
+export{rides}

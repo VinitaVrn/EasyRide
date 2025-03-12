@@ -32,8 +32,6 @@ export const getDistanceTime = async (origin, destination) => {
     const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`;
 
     try {
-
-
         const response = await axios.get(url);
         if (response.data.status === 'OK') {
 
