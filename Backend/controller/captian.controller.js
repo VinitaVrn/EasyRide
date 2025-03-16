@@ -4,7 +4,7 @@ import { captain } from "../models/captian.model.js";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 
-export const registerCaptain = async (req, res, next) => {
+export const registerCaptain = async (req, res) => {
 
     // const errors = validationResult(req);
     // if (!errors.isEmpty()) {
@@ -21,8 +21,6 @@ export const registerCaptain = async (req, res, next) => {
     if (isCaptainAlreadyExist) {
         return res.status(400).json({ message: 'Captain already exist' });
     }
-
-
     
     const hashedPassword = await argon2.hash(password)
 
@@ -38,8 +36,9 @@ export const registerCaptain = async (req, res, next) => {
         }
     };
     await captain.create(newcaptain)
-
-    res.status(201).json({msg:"captian Registered",newcaptain});
+    const captaindetail = await captain.findOne({ email })
+    const token = jwt.sign({id:captaindetail._id},process.env.JWT_KEY,{expiresIn:"2days"})
+    res.status(201).json({newcaptain,token});
     } catch(e){
         res.status(500).json({msg:"Internal server error",error:e.message})
     }
@@ -66,9 +65,7 @@ export const loginCaptain = async (req, res, next) => {
 
     const token = jwt.sign({id:Captain._id,name:Captain.name},process.env.JWT_KEY,{expiresIn:"24h"})
 
-    // res.cookie('token', token);
-
-    res.status(200).json({msg:"login success", token, Captain });
+    res.status(200).json({ Captain,token});
     }catch(e){
         res.status(500).json({msg:"Internal server error",error:e.message})
     }

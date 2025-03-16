@@ -1,6 +1,6 @@
 import { configDotenv } from "dotenv";
 configDotenv();
-import express from "express";
+import express from "express"
 import http  from "http";
 import cors from "cors";
 import {connect} from "mongoose";
@@ -11,7 +11,7 @@ import { mapRoute } from "./routers/map.route.js";
 const app=express();
 app.use(cors());
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: true }))
 app.use("/user",userRouter);
 app.use("/captain",captianRouter);
 app.use("/map",mapRoute);

@@ -33,7 +33,7 @@ export const registerUser = async (req, res, next) => {
     await users.create(user);
     const userdetail = await users.findOne({ email })
     const token = jwt.sign({id:userdetail._id},process.env.JWT_KEY,{expiresIn:"24h"})
-    res.status(201).json({msg:"Signup success",token})
+    res.status(201).json({user:userdetail,token:token})
 
 }catch(e){
     res.status(500).json({msg:"Internal server error", error:e.message})
@@ -68,17 +68,18 @@ export const loginUser = async (req, res, next) => {
 
     // res.cookie('token', token);
 
-    res.status(200).json({msg:"login success", token:token});
+    res.status(200).json({userdetails:user, token:token});
 }catch(e){
     res.status(500).json({msg:"Internal server error",error:e.message})
 }
 }
 
 export const getprofile =async(req,res)=>{
+    console.log("vinita")
     res.status(200).json(req.user);
 }
 
-export const deleteuser=async(req,res)=>{
+export const logout=async(req,res)=>{
     const token = req.headers.authorization.split(' ')[ 1 ];
 
     await blacklist.create({ token });

@@ -4,10 +4,6 @@ import mapService from "../services/map.service.js"
 import { sendMessageToSocketId } from "../server.js";
 
 module.exports.createRide = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
 
     const { userId, pickup, destination, vehicleType } = req.body;
 
@@ -17,13 +13,11 @@ module.exports.createRide = async (req, res) => {
 
         const pickupCoordinates = await mapService.getAddressCoordinate(pickup);
 
-
-
         const captainsInRadius = await mapService.getCaptainsInTheRadius(pickupCoordinates.ltd, pickupCoordinates.lng, 2);
 
         ride.otp = ""
 
-        const rideWithUser = await rideModel.findOne({ _id: ride._id }).populate('user');
+        const rideWithUser = await rides.findOne({ _id: ride._id }).populate('user');
 
         captainsInRadius.map(captain => {
 
@@ -43,10 +37,7 @@ module.exports.createRide = async (req, res) => {
 };
 
 module.exports.getFare = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+
 
     const { pickup, destination } = req.query;
 
@@ -59,10 +50,6 @@ module.exports.getFare = async (req, res) => {
 }
 
 module.exports.confirmRide = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
 
     const { rideId } = req.body;
 
@@ -83,10 +70,6 @@ module.exports.confirmRide = async (req, res) => {
 }
 
 module.exports.startRide = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
 
     const { rideId, otp } = req.query;
 
@@ -107,11 +90,7 @@ module.exports.startRide = async (req, res) => {
 }
 
 module.exports.endRide = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
+    
     const { rideId } = req.body;
 
     try {
