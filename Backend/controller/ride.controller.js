@@ -3,7 +3,7 @@ import rideService from "../services/ride.service.js"
 import mapService from "../services/map.service.js"
 import { sendMessageToSocketId } from "../server.js";
 
-module.exports.createRide = async (req, res) => {
+export const createRide = async (req, res) => {
 
     const { userId, pickup, destination, vehicleType } = req.body;
 
@@ -36,7 +36,7 @@ module.exports.createRide = async (req, res) => {
 
 };
 
-module.exports.getFare = async (req, res) => {
+export const getFare = async (req, res) => {
 
 
     const { pickup, destination } = req.query;
@@ -49,7 +49,7 @@ module.exports.getFare = async (req, res) => {
     }
 }
 
-module.exports.confirmRide = async (req, res) => {
+export const confirmRide = async (req, res) => {
 
     const { rideId } = req.body;
 
@@ -69,7 +69,7 @@ module.exports.confirmRide = async (req, res) => {
     }
 }
 
-module.exports.startRide = async (req, res) => {
+export const startRide = async (req, res) => {
 
     const { rideId, otp } = req.query;
 
@@ -89,7 +89,7 @@ module.exports.startRide = async (req, res) => {
     }
 }
 
-module.exports.endRide = async (req, res) => {
+export const endRide = async (req, res) => {
     
     const { rideId } = req.body;
 
